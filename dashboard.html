@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>BloodLink Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="nav">
+  <a href="dashboard.html">Home</a>
+  <a href="profile.html">My Profile</a>
+  <a href="about.html">About</a>
+  <a href="index.html">Logout</a>
+</div>
+
+<div class="card">
+
+  <div class="logo">
+    <img src="logo.png">
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" onclick="show('donor',this)">Donate</div>
+    <div class="tab" onclick="show('find',this)">Find Blood</div>
+  </div>
+
+  <div id="donor">
+    <input id="name" placeholder="Full Name">
+    <input id="phone" placeholder="Phone Number">
+    <input id="email" placeholder="Email">
+    <input id="address" placeholder="Full Address">
+
+    <select id="state" onchange="loadCities()">
+      <option value="">Select State</option>
+    </select>
+
+    <select id="city">
+      <option value="">Select City</option>
+    </select>
+
+    <select id="blood">
+      <option value="">Select Blood Group</option>
+      <option>O+</option>
+      <option>O-</option>
+      <option>A+</option>
+      <option>A-</option>
+      <option>B+</option>
+      <option>B-</option>
+      <option>AB+</option>
+      <option>AB-</option>
+      <option>RH NULL</option>
+    </select>
+
+    <button id="save">Register as Donor</button>
+  </div>
+
+  <div id="find" style="display:none">
+
+    <select id="needBlood">
+      <option value="">Select Blood Group</option>
+      <option>O+</option>
+      <option>O-</option>
+      <option>A+</option>
+      <option>A-</option>
+      <option>B+</option>
+      <option>B-</option>
+      <option>AB+</option>
+      <option>AB-</option>
+      <option>RH NULL</option>
+    </select>
+
+    <select id="needState" onchange="loadFindCities()">
+      <option value="">Select State</option>
+    </select>
+
+    <select id="needCity">
+      <option value="">Select City</option>
+    </select>
+
+    <button onclick="search()">Find Donors</button>
+  </div>
+
+</div>
+
+<script>
+let statesCities = {};
+
+fetch("states-cities.json")
+.then(res => res.json())
+.then(data => {
+  statesCities = data;
+  for(let state in data){
+    document.getElementById("state").innerHTML += `<option>${state}</option>`;
+    document.getElementById("needState").innerHTML += `<option>${state}</option>`;
+  }
+});
+
+function loadCities(){
+  city.innerHTML = '<option value="">Select City</option>';
+  statesCities[state.value]?.forEach(c=>{
+    city.innerHTML += `<option>${c}</option>`;
+  });
+}
+
+function loadFindCities(){
+  needCity.innerHTML = '<option value="">Select City</option>';
+  statesCities[needState.value]?.forEach(c=>{
+    needCity.innerHTML += `<option>${c}</option>`;
+  });
+}
+
+function show(section, el){
+  document.getElementById("donor").style.display = section==="donor"?"block":"none";
+  document.getElementById("find").style.display = section==="find"?"block":"none";
+  document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+  el.classList.add("active");
+}
+
+function search(){
+  if(!needBlood.value || !needState.value || !needCity.value){
+    alert("Please select blood group, state and city");
+    return;
+  }
+
+  const blood = encodeURIComponent(needBlood.value);
+  const state = encodeURIComponent(needState.value);
+  const city = encodeURIComponent(needCity.value);
+
+  window.location = `results.html?blood=${blood}&state=${state}&city=${city}`;
+}
+</script>
+
+<script type="module" src="app.js"></script>
+
+</body>
+</html>

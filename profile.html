@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>BloodLink – My Profile</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="nav">
+  <a href="dashboard.html">Home</a>
+  <a href="about.html">About</a>
+  <a href="index.html">Logout</a>
+</div>
+
+<div class="card">
+  <h2>My Profile</h2>
+  <div id="info">Loading...</div>
+</div>
+
+<script type="module">
+import { auth, db } from "./firebase.js";
+import { collection, query, where, getDocs } from
+"https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+
+auth.onAuthStateChanged(async user=>{
+  if(!user){
+    window.location="index.html";
+    return;
+  }
+
+  const q = query(collection(db,"donors"), where("uid","==",user.uid));
+  const data = await getDocs(q);
+
+  if(data.empty){
+    info.innerHTML = `
+      <p>Email: ${user.email}</p>
+      <p>You are not registered as a donor.</p>
+    `;
+    return;
+  }
+
+  data.forEach(d=>{
+    const x = d.data();
+    info.innerHTML = `
+      <p><b>Name:</b> ${x.name}</p>
+      <p><b>Email:</b> ${x.email}</p>
+      <p><b>Phone:</b> ${x.phone}</p>
+      <p><b>Blood Group:</b> ${x.blood}</p>
+      <p><b>City:</b> ${x.city}, ${x.state}</p>
+      <p><b>Address:</b> ${x.address}</p>
+    `;
+  });
+});
+</script>
+
+</body>
+</html>
