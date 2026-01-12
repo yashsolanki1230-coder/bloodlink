@@ -21,4 +21,4 @@ Finding blood donors quickly during emergencies is difficult. BloodLink allows i
 https://bloodlink-acd9c.web.app
 
 👨‍💻 Author
-Harsh Parashar
+Yash Solanki
